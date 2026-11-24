@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Karaoke Songbook</title>
+<meta name="theme-color" content="#0f2a6b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Karaoke">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light dark;
+--bg:light-dark(#f1f5ff,#0a1230);--panel:light-dark(#ffffff,#121d45);--ink:light-dark(#0b1533,#e8eeff);
+--muted:light-dark(#4b5a80,#a3b1d6);--line:light-dark(#d6e0f7,#22306a);--pink:light-dark(#1d4ed8,#2563eb);--accentText:light-dark(#1d4ed8,#7fb2ff);
+--gold:#ffc23d;--goldInk:#0b1533;--wine:#0f2a6b}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "DM Sans",system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(20px,4vw,48px) max(5vw,16px);max-width:1240px;margin:0 auto}
+header{background:var(--wine);color:#eef3ff}
+header .band{display:flex;flex-wrap:wrap;gap:12px;align-items:end;justify-content:space-between;padding-bottom:20px}
+h1{font:400 clamp(28px,6vw,46px)/1.05 Bungee,Impact,sans-serif;margin:0;text-wrap:balance}
+h1 span{color:var(--gold)}
+.sub{margin:6px 0 0;color:#c4d4ff}
+button,select,input,textarea{font:inherit;font-size:16px;color:inherit}
+.btn{min-height:44px;padding:0 18px;border-radius:999px;border:2px solid transparent;background:var(--pink);color:#fff;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.btn.gold{background:var(--gold);color:var(--goldInk)}
+.btn.ghost{background:transparent;border-color:currentColor;color:inherit}
+.btn:focus-visible,select:focus-visible,input:focus-visible,.chip:focus-visible,textarea:focus-visible,label.btn:focus-within{outline:3px solid var(--gold);outline-offset:2px}
+.slipwrap{background:var(--wine);padding:0 max(5vw,16px) 28px}
+.slip{max-width:1240px;margin:0 auto;background:var(--gold);color:var(--goldInk);border-radius:14px;padding:18px 20px;
+display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;box-shadow:0 10px 0 -4px #00000040;position:relative}
+.slip::before{content:"";position:absolute;inset:8px;border:2px dashed #0b153355;border-radius:9px;pointer-events:none}
+.slip small{font-weight:700;letter-spacing:.02em}
+.slip .t{font:400 clamp(22px,5vw,34px)/1.1 Bungee,Impact,sans-serif;margin:2px 0}
+.slip .a{font-weight:600}
+.slip .acts{display:flex;flex-wrap:wrap;gap:8px;justify-content:end;position:relative}
+.slip .btn{background:var(--goldInk);color:var(--gold)}
+.slip .btn.ghost{background:transparent;color:var(--goldInk)}
+@media(max-width:600px){.slip{grid-template-columns:1fr}.slip .acts{justify-content:start}}
+.controls{display:grid;gap:12px;margin-bottom:16px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.search{flex:1 1 220px;min-height:44px;border-radius:12px;border:2px solid var(--line);background:var(--panel);padding:0 14px}
+select{min-height:44px;border-radius:12px;border:2px solid var(--line);background:var(--panel);padding:0 10px}
+.lbl{font-size:13px;color:var(--muted);font-weight:600;margin-right:2px}
+.chip{min-height:36px;padding:0 14px;border-radius:999px;border:2px solid var(--line);background:var(--panel);cursor:pointer;font-size:14px;font-weight:600}
+.chip[aria-pressed=true]{background:var(--pink);border-color:var(--pink);color:#fff}
+.count{font-size:14px;color:var(--muted)}
+ol.book{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+@media(min-width:900px){ol.book{grid-template-columns:1fr 1fr}}
+.song{background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center}
+.num{font:400 15px Bungee,Impact,sans-serif;color:var(--accentText);width:2.4em;text-align:right}
+.song h3{margin:0;font-size:17px;line-height:1.25}
+.song .by{color:var(--muted);font-size:14px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;font-size:13px}
+.tag{padding:2px 9px;border-radius:999px;background:var(--bg);border:1px solid var(--line);white-space:nowrap}
+.tag.d-Stretch{border-color:var(--accentText);color:var(--accentText)}
+.stat{text-align:right;font-size:13px;color:var(--muted);white-space:nowrap}
+.stat b{display:block;font-size:20px;color:var(--ink)}
+.song .mini{display:flex;gap:6px;grid-column:2/4;flex-wrap:wrap}
+.mini .btn{min-height:40px;padding:0 14px;font-size:14px}
+.mini .btn.ghost{color:var(--muted)}
+.empty{padding:28px;text-align:center;border:2px dashed var(--line);border-radius:14px;color:var(--muted)}
+.note{font-size:13px;color:var(--muted);margin:18px 0 0}
+.backup{margin-top:12px;color:var(--muted)}
+.backup .btn{min-height:40px;font-size:14px}
+dialog{border:0;border-radius:16px;padding:0;width:min(520px,94vw);background:var(--panel);color:var(--ink)}
+dialog::backdrop{background:#0009}
+form.ed{padding:20px;display:grid;gap:12px}
+form.ed h2{margin:0;font:400 22px Bungee,Impact,sans-serif}
+form.ed label{display:grid;gap:4px;font-size:14px;font-weight:600}
+form.ed input,form.ed select{min-height:44px;border-radius:10px;border:2px solid var(--line);background:var(--bg);padding:0 12px;font-weight:400}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+@media(prefers-reduced-motion:no-preference){.slip.pop{animation:pop .35s ease}@keyframes pop{0%{transform:rotate(-2deg) scale(.96)}100%{transform:none}}}
+</style>
+</head>
+<body>
+<header><div class="band">
+  <div><h1>My <span>Karaoke</span> Songbook</h1><p class="sub" id="sub">Your go-to songs, ready when the KJ calls.</p></div>
+  <button class="btn gold" id="addBtn" type="button">+ Add song</button>
+</div></header>
+<div class="slipwrap"><div class="slip" id="slip" aria-live="polite">
+  <div><small>REQUEST SLIP · UP NEXT</small><div class="t" id="slipT">Can't decide?</div><div class="a" id="slipA">Tap "Pick for me" — it respects your filters.</div></div>
+  <div class="acts"><button class="btn" id="pickBtn" type="button">🎲 Pick for me</button><button class="btn ghost" id="slipSang" type="button" hidden>Sang it!</button></div>
+</div></div>
+<main class="band">
+  <div class="controls">
+    <div class="row">
+      <input class="search" id="q" type="search" placeholder="Search song or artist" aria-label="Search songs">
+      <select id="sort" aria-label="Sort by">
+        <option value="title">Title A–Z</option><option value="artist">Artist A–Z</option>
+        <option value="most">Most sung</option><option value="stale">Longest since sung</option><option value="recent">Recently sung</option>
+      </select>
+    </div>
+    <div class="row" id="vibeRow"><span class="lbl">Vibe</span></div>
+    <div class="row" id="diffRow"><span class="lbl">Difficulty</span></div>
+    <div class="count" id="count"></div>
+  </div>
+  <ol class="book" id="book"></ol>
+  <p class="note" id="note"></p>
+  <div class="row backup">
+    <button class="btn ghost" id="expBtn" type="button">Download backup</button>
+    <label class="btn ghost">Restore backup<input type="file" id="impFile" accept="application/json,.json" hidden></label>
+  </div>
+</main>
+<dialog id="dlg"><form class="ed" id="form" method="dialog">
+  <h2 id="dlgTitle">Add song</h2>
+  <label>Song title<input id="fT" required maxlength="120"></label>
+  <label>Artist<input id="fA" required maxlength="120"></label>
+  <div class="two">
+    <label>Vibe<select id="fV"></select></label>
+    <label>Difficulty<select id="fD"></select></label>
+  </div>
+  <div class="two">
+    <label>Times sung<input id="fN" type="number" min="0" step="1" inputmode="numeric"></label>
+    <label>Last sung<input id="fL" type="date"></label>
+  </div>
+  <div class="row" style="justify-content:space-between">
+    <button class="btn ghost" type="button" id="delBtn">Delete</button>
+    <div class="row"><button class="btn ghost" type="button" id="cancelBtn">Cancel</button><button class="btn" type="submit">Save</button></div>
+  </div>
+</form></dialog>
+<div class="toast" id="toast"></div>
+<script type="module">
+/* Songs sync through Firestore at users/{uid}/songs/{songId}. See ../shared/fb.js */
+import { db, fb, fire, onSyncError, requireUser } from "../shared/fb.js";
+const { collection, doc, setDoc, deleteDoc, onSnapshot, writeBatch } = fb;
+
+const VIBES=['Warm-up','Crowd-pleaser','Hype','Ballad'];
+const DIFFS=['Easy','Medium','Stretch'];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let songs=[],loaded=false,uid=null;
+let ui={q:'',sort:'title',v:[],d:[]};
+try{Object.assign(ui,JSON.parse(localStorage.getItem('kb-ui')||'{}'))}catch(e){}
+let editing=null,picked=null;
+
+const fmt=d=>{if(!d)return'Never';const x=new Date(d+'T12:00');return x.toLocaleDateString(undefined,{month:'short',day:'numeric',year:x.getFullYear()===new Date().getFullYear()?undefined:'numeric'})};
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const keep=()=>{try{localStorage.setItem('kb-ui',JSON.stringify(ui))}catch(e){}};
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),2200)}
+onSyncError(toast);
+
+const songsCol=()=>collection(db,'users',uid,'songs');
+const songDoc=id=>doc(db,'users',uid,'songs',id);
+function persist(s){const {id,...data}=s;fire(setDoc(songDoc(id),data))}
+function removeSong(id){fire(deleteDoc(songDoc(id)))}
+
+function chips(row,list,key){
+  row.innerHTML='<span class="lbl">'+(key==='v'?'Vibe':'Difficulty')+'</span>'+list.map(x=>'<button type="button" class="chip" data-k="'+key+'" data-x="'+esc(x)+'" aria-pressed="'+ui[key].includes(x)+'">'+esc(x)+'</button>').join('');
+}
+function visible(){
+  const q=ui.q.trim().toLowerCase();
+  let r=songs.filter(s=>(!q||(s.t+' '+s.a).toLowerCase().includes(q))&&(!ui.v.length||ui.v.includes(s.v))&&(!ui.d.length||ui.d.includes(s.d)));
+  const by={title:(a,b)=>a.t.localeCompare(b.t),artist:(a,b)=>a.a.localeCompare(b.a)||a.t.localeCompare(b.t),
+    most:(a,b)=>(b.n||0)-(a.n||0)||a.t.localeCompare(b.t),stale:(a,b)=>(a.l||'').localeCompare(b.l||'')||a.t.localeCompare(b.t),
+    recent:(a,b)=>(b.l||'').localeCompare(a.l||'')||a.t.localeCompare(b.t)};
+  return r.sort(by[ui.sort]||by.title);
+}
+function render(){
+  chips($('vibeRow'),VIBES,'v');chips($('diffRow'),DIFFS,'d');
+  $('q').value=ui.q;$('sort').value=ui.sort;
+  if(!loaded){$('count').textContent='';$('book').innerHTML='<li class="empty">Loading your songbook…</li>';return}
+  const r=visible();
+  $('count').textContent=r.length+' of '+songs.length+' songs';
+  $('book').innerHTML=r.length?r.map((s,i)=>'<li class="song"><span class="num">'+(i+1)+'</span><div><h3>'+esc(s.t)+'</h3><div class="by">'+esc(s.a)+'</div><div class="tags"><span class="tag">'+esc(s.v)+'</span><span class="tag d-'+esc(s.d)+'">'+esc(s.d)+'</span></div></div><div class="stat"><b>'+(s.n||0)+'×</b>'+esc(fmt(s.l))+'</div><div class="mini"><button type="button" class="btn" data-sang="'+esc(s.id)+'">Sang it</button><button type="button" class="btn ghost" data-edit="'+esc(s.id)+'">Edit</button></div></li>').join('')
+    :'<li class="empty">'+(songs.length?'No songs match those filters.':'Your songbook is empty — tap “+ Add song”, or restore a backup.')+'</li>';
+  const total=songs.reduce((a,s)=>a+(s.n||0),0);
+  $('sub').textContent=songs.length+' go-to songs · '+total+' performances logged';
+}
+function sang(id){const s=songs.find(x=>x.id===id);if(!s)return;s.n=(s.n||0)+1;s.l=today();persist(s);render();toast('Logged “'+s.t+'” 🎤')}
+function pick(){
+  const r=visible();
+  if(!r.length){toast('No songs match your filters');return}
+  let pool=r.length>1&&picked?r.filter(s=>s.id!==picked):r;
+  const s=pool[Math.floor(Math.random()*pool.length)];picked=s.id;
+  $('slipT').textContent=s.t;$('slipA').textContent=s.a+' · '+s.v+' · '+s.d+' · last sung '+fmt(s.l);
+  $('pickBtn').textContent='🎲 Pick again';$('slipSang').hidden=false;
+  const el=$('slip');el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');
+}
+function openEd(id){
+  editing=id?songs.find(s=>s.id===id):null;
+  $('dlgTitle').textContent=editing?'Edit song':'Add song';
+  $('fT').value=editing?.t||'';$('fA').value=editing?.a||'';
+  $('fV').value=editing?.v||VIBES[1];$('fD').value=editing?.d||DIFFS[1];
+  $('fN').value=editing?.n??0;$('fL').value=editing?.l||'';
+  const del=$('delBtn');del.hidden=!editing;del.textContent='Delete';del.dataset.arm='';
+  $('dlg').showModal();setTimeout(()=>$('fT').focus(),30);
+}
+$('fV').innerHTML=VIBES.map(v=>'<option>'+esc(v)+'</option>').join('');
+$('fD').innerHTML=DIFFS.map(v=>'<option>'+esc(v)+'</option>').join('');
+$('form').addEventListener('submit',e=>{
+  e.preventDefault();
+  const rec={t:$('fT').value.trim(),a:$('fA').value.trim(),v:$('fV').value,d:$('fD').value,n:Math.max(0,parseInt($('fN').value,10)||0),l:$('fL').value||''};
+  if(!rec.t||!rec.a)return;
+  const s=editing?{...editing,...rec}:{id:'s'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),...rec};
+  persist(s);$('dlg').close();toast(editing?'Saved changes':'Added “'+rec.t+'”');
+});
+$('delBtn').addEventListener('click',e=>{
+  const b=e.currentTarget;
+  if(!b.dataset.arm){b.dataset.arm='1';b.textContent='Tap again to delete';return}
+  if(picked===editing.id)picked=null;
+  removeSong(editing.id);$('dlg').close();toast('Deleted “'+editing.t+'”');
+});
+$('cancelBtn').addEventListener('click',()=>$('dlg').close());
+$('addBtn').addEventListener('click',()=>{if(loaded)openEd(null)});
+$('pickBtn').addEventListener('click',pick);
+$('slipSang').addEventListener('click',()=>{if(picked){sang(picked);const s=songs.find(x=>x.id===picked);if(s)$('slipA').textContent=s.a+' · '+s.v+' · '+s.d+' · sung '+s.n+'×'}});
+$('q').addEventListener('input',e=>{ui.q=e.target.value;keep();render()});
+$('sort').addEventListener('change',e=>{ui.sort=e.target.value;keep();render()});
+document.addEventListener('click',e=>{
+  const c=e.target.closest('.chip');
+  if(c){const k=c.dataset.k,x=c.dataset.x;ui[k]=ui[k].includes(x)?ui[k].filter(y=>y!==x):[...ui[k],x];keep();render();return}
+  const s=e.target.closest('[data-sang]');if(s){sang(s.dataset.sang);return}
+  const ed=e.target.closest('[data-edit]');if(ed)openEd(ed.dataset.edit);
+});
+/* backup / restore */
+$('expBtn').addEventListener('click',()=>{
+  const blob=new Blob([JSON.stringify({app:'karaoke-songbook',exported:new Date().toISOString(),songs},null,1)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='karaoke-backup-'+today()+'.json';
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+});
+$('impFile').addEventListener('change',async e=>{
+  const f=e.target.files[0];e.target.value='';if(!f||!loaded)return;
+  let clean;
+  try{
+    const data=JSON.parse(await f.text());const list=Array.isArray(data)?data:data.songs;
+    if(!Array.isArray(list))throw 0;
+    clean=list.filter(s=>s&&typeof s.t==='string'&&typeof s.a==='string').map(s=>({id:String(s.id||('s'+Math.random().toString(36).slice(2,9))).replace(/\//g,'_').slice(0,100),t:s.t.slice(0,120),a:s.a.slice(0,120),v:VIBES.includes(s.v)?s.v:VIBES[1],d:DIFFS.includes(s.d)?s.d:DIFFS[1],n:Math.max(0,parseInt(s.n,10)||0),l:/^\d{4}-\d{2}-\d{2}$/.test(s.l||'')?s.l:''}));
+  }catch(err){toast('That file isn’t a songbook backup');return}
+  if(!confirm('Replace your current songbook ('+songs.length+' songs) with the '+clean.length+' songs in this backup?'))return;
+  const keepIds=new Set(clean.map(s=>s.id));
+  const ops=[...songs.filter(s=>!keepIds.has(s.id)).map(s=>b=>b.delete(songDoc(s.id))),...clean.map(s=>b=>{const {id,...d}=s;b.set(songDoc(id),d)})];
+  for(let i=0;i<ops.length;i+=400){const b=writeBatch(db);ops.slice(i,i+400).forEach(op=>op(b));fire(b.commit())}
+  picked=null;toast('Restored '+clean.length+' songs');
+});
+render();
+$('note').textContent='Backups are a JSON file you can keep anywhere.';
+
+/* sign in, then live-sync the songbook */
+const user=await requireUser({appName:'Karaoke Songbook'});
+uid=user.uid;
+onSnapshot(songsCol(),snap=>{
+  songs=snap.docs.map(d=>({id:d.id,...d.data()})).filter(s=>typeof s.t==='string'&&typeof s.a==='string');
+  loaded=true;render();
+},err=>{$('book').innerHTML='<li class="empty">Couldn’t load your songbook ('+esc(err.code||err.message)+').</li>'});
+</script>
+</body>
+</html>

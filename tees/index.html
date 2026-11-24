@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tee Rotation</title>
+<meta name="theme-color" content="#1f3fd1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tees">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0e1120);--ink:light-dark(#111318,#eef0f6);--mute:light-dark(#5b6070,#a3a9bb);--line:light-dark(#e3e5ec,#262b40);--card:light-dark(#f5f6fa,#161a2d);--cob:light-dark(#1f3fd1,#1a2f9e);--tag:#ffd23f;--tagink:#1b1606;--pink:#ff4f8b}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Archivo,system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(24px,4vw,56px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+h1,h2{font-weight:800;line-height:1.05;margin:0;text-wrap:balance}
+h1{font-size:clamp(32px,5vw,50px)}h2{font-size:clamp(26px,3vw,34px)}
+button,select,input,textarea{font:inherit;font-size:16px;color:inherit}
+button,.fbtn{min-height:44px;padding:0 18px;border-radius:999px;border:2px solid currentColor;background:transparent;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;justify-content:center}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,.card:focus-visible,.fbtn:focus-within{outline:3px solid var(--pink);outline-offset:2px}
+button.solid{background:var(--tag);color:var(--tagink);border-color:var(--tag)}
+button.ink{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.danger{color:#d6262f}
+select,input,textarea{min-height:44px;padding:8px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg)}
+.hero{background:var(--cob);color:#fff}
+.rack{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(20px,4vw,56px);align-items:center;margin-top:20px}
+.hang{position:relative;aspect-ratio:1/0.95;max-height:440px;display:grid;place-items:center}
+.hang svg,.hang img{width:100%;height:100%;object-fit:contain}
+.hang img{border-radius:18px;object-fit:cover;box-shadow:0 18px 40px #0005}
+.rod{position:absolute;left:-6%;right:-6%;top:3%;height:8px;border-radius:8px;background:#ffffff55}
+.tag{background:var(--tag);color:var(--tagink);border-radius:6px 22px 22px 6px;padding:26px 26px 22px 34px;position:relative;box-shadow:0 14px 30px #0003;transform:rotate(-1.5deg)}
+.tag::before{content:"";position:absolute;left:12px;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;background:var(--cob);box-shadow:inset 0 0 0 2px #0002}
+.tag .nm{font-size:clamp(26px,3.6vw,40px);font-weight:800;line-height:1.05;text-wrap:balance}
+.tag .meta{margin:10px 0 0;display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:999px;font-size:14px;background:#0000000f;white-space:nowrap}
+.dot{width:12px;height:12px;border-radius:50%;border:1px solid #0003;flex:none}
+.tag .worn{font-size:14px;margin-top:12px;opacity:.8}
+.acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;align-items:center}
+.hero .acts button:not(.solid){color:#fff}
+.hero select{background:#ffffff1a;border-color:#ffffff55;color:#fff}
+.hero select option{color:#111}
+.sub{opacity:.85;margin:6px 0 0}
+.tools{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 8px}
+.tools input[type=search]{flex:1 1 220px}
+.count{color:var(--mute);font-size:14px;margin:6px 0 16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+.card{background:var(--card);border-radius:16px;padding:12px;cursor:pointer;border:1.5px solid transparent;text-align:left;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:6px;min-height:0}
+.card:hover{border-color:var(--line)}
+.card .th{aspect-ratio:1;border-radius:12px;display:grid;place-items:center;overflow:hidden;background:light-dark(#fff,#0e1120)}
+.card .th img{width:100%;height:100%;object-fit:cover}.card .th svg{width:82%;height:82%}
+.card b{font-weight:600;line-height:1.25}
+.card small{color:var(--mute);font-size:13px;line-height:1.35;font-weight:400}
+.recent{outline:2px dashed var(--line);outline-offset:-2px}
+.empty{padding:40px 20px;text-align:center;color:var(--mute);border:2px dashed var(--line);border-radius:16px}
+.foot{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:28px;padding-top:18px;border-top:1.5px solid var(--line);color:var(--mute);font-size:14px}
+.foot input[type=number]{width:84px}
+.status{font-size:14px;color:var(--mute);min-height:1.5em}
+dialog{border:0;border-radius:20px;padding:0;width:min(560px,94vw);background:var(--bg);color:var(--ink);box-shadow:0 30px 80px #0006}
+dialog::backdrop{background:#0008}
+.dlg{padding:22px;display:grid;gap:14px;max-height:88vh;overflow:auto}
+.dlg label{display:grid;gap:4px;font-weight:600;font-size:14px}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.occ{display:flex;flex-wrap:wrap;gap:8px}
+.occ label{display:inline-flex;flex-direction:row;align-items:center;gap:6px;font-weight:400;font-size:15px;padding:6px 12px;border:1.5px solid var(--line);border-radius:999px;min-height:40px}
+.pv{display:flex;gap:12px;align-items:center}
+.pv .th{width:84px;height:84px;border-radius:12px;overflow:hidden;background:var(--card);display:grid;place-items:center;flex:none}
+.pv .th img{width:100%;height:100%;object-fit:cover}.pv .th svg{width:80%}
+.dacts{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between}
+.hist{font-size:14px;color:var(--mute)}
+textarea{min-height:200px;font-family:ui-monospace,Menlo,monospace;font-size:14px}
+.note{font-size:13px;color:var(--mute)}
+@media(max-width:600px){.rack{grid-template-columns:1fr}.hang{max-height:300px}.row2{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(prefers-reduced-motion:no-preference){.swing{animation:sw .9s ease-out}@keyframes sw{0%{transform:rotate(4deg)}50%{transform:rotate(-2deg)}100%{transform:none}}.swing{transform-origin:50% 6%}}
+</style>
+</head>
+<body>
+<section class="band hero"><div class="wrap">
+  <h1>Today's shirt</h1>
+  <p class="sub" id="today"></p>
+  <div class="rack">
+    <div class="hang"><div class="rod"></div><div id="pic" style="width:100%;height:100%"></div></div>
+    <div>
+      <div class="tag" id="tag"><div class="nm">Loading your closet…</div></div>
+      <div class="acts" id="acts">
+        <button class="solid" id="wear">Wear it</button>
+        <button id="again">Another one</button>
+        <select id="pickOcc" aria-label="Pick from"><option value="">Pick from: everything</option></select>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section class="band"><div class="wrap">
+  <h2>The collection</h2>
+  <div class="tools">
+    <input type="search" id="q" placeholder="Search shirts" aria-label="Search shirts">
+    <select id="fColor" aria-label="Color"><option value="">All colors</option></select>
+    <select id="fTheme" aria-label="Theme"><option value="">All themes</option></select>
+    <select id="fOcc" aria-label="Occasion"><option value="">All occasions</option></select>
+    <select id="sort" aria-label="Sort">
+      <option value="name">Sort: name</option><option value="color">Sort: color</option><option value="theme">Sort: theme</option>
+      <option value="last">Sort: longest since worn</option><option value="most">Sort: most worn</option><option value="new">Sort: newest added</option>
+    </select>
+  </div>
+  <div class="tools">
+    <button class="ink" id="add">Add shirt</button>
+    <button id="bulk">Bulk add</button>
+  </div>
+  <p class="count" id="count"></p>
+  <div class="grid" id="grid"></div>
+  <div class="foot">
+    <label>Don't repeat a shirt for <input type="number" id="skip" min="0" max="365" value="14"> days</label>
+    <button id="clearSamples" hidden>Remove sample shirts</button>
+    <button id="copyJson">Download backup</button>
+    <label class="fbtn">Restore backup<input type="file" id="restore" accept="application/json,.json" hidden></label>
+    <span class="status" id="status"></span>
+  </div>
+  <p class="note">Synced to your Google account. Backups include your shirt list and wear history, but not photos.</p>
+</div></section>
+
+<dialog id="dEdit"><form class="dlg" id="fEdit">
+  <h2 id="eTitle">Add shirt</h2>
+  <label>Name<input id="eName" required maxlength="80" placeholder="e.g. Pink Floyd prism tee"></label>
+  <div class="row2">
+    <label>Color<select id="eColor"></select></label>
+    <label>Theme<input id="eTheme" list="themes" maxlength="40" placeholder="Band, Gaming, Event…"></label>
+  </div>
+  <datalist id="themes"></datalist>
+  <div><div style="font-weight:600;font-size:14px;margin-bottom:6px">Occasion</div><div class="occ" id="eOcc"></div></div>
+  <div class="pv"><div class="th" id="eThumb"></div>
+    <div style="display:grid;gap:6px"><label>Photo (optional)<input type="file" id="ePhoto" accept="image/*"></label>
+    <button type="button" id="eNoPhoto" hidden>Remove photo</button></div></div>
+  <label>Notes<input id="eNotes" maxlength="200" placeholder="Where you got it, fit, etc."></label>
+  <div class="hist" id="eHist"></div>
+  <div class="dacts">
+    <button type="button" class="danger" id="eDel">Delete</button>
+    <span style="display:flex;gap:10px"><button type="button" id="eCancel">Cancel</button><button class="ink" id="eSave">Save</button></span>
+  </div>
+</form></dialog>
+
+<dialog id="dBulk"><form class="dlg" id="fBulk">
+  <h2>Bulk add</h2>
+  <p class="note" style="margin:0">One shirt per line: <b>Name | Color | Theme | Occasions</b>. Only the name is required. Occasions are comma-separated: Work, Casual, Going out, Gym, Lounge.</p>
+  <textarea id="bText" placeholder="Metallica Master of Puppets | Black | Band | Casual, Going out&#10;Zelda Hylian crest | Green | Gaming | Casual&#10;Plain navy crew | Navy | Plain | Work, Casual"></textarea>
+  <div class="dacts"><span class="note" id="bNote"></span><span style="display:flex;gap:10px"><button type="button" id="bCancel">Cancel</button><button class="ink">Add all</button></span></div>
+</form></dialog>
+
+<script type="module">
+/* Firestore storage layer. Mimics the small db/assets API the app below was written against.
+   Data: users/{uid}/shirts/{id}, users/{uid}/photos/{id} (compressed JPEG thumbnail), users/{uid}/settings/tees */
+import { db, fb, fire, onSyncError, requireUser } from "../shared/fb.js";
+const { collection, doc, setDoc, deleteDoc, onSnapshot } = fb;
+
+window.PHOTO_URLS = {};
+const objUrls = {}; // photo id -> { src, url }
+function dataUrlToObjectUrl(d) {
+  const [head, b64] = d.split(",");
+  const bin = atob(b64), arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return URL.createObjectURL(new Blob([arr], { type: head.slice(5).split(";")[0] }));
+}
+async function shrink(blob) {
+  const bmp = await createImageBitmap(blob);
+  for (const [max, q] of [[640, .8], [480, .7], [360, .6]]) {
+    const sc = Math.min(1, max / Math.max(bmp.width, bmp.height));
+    const cv = document.createElement("canvas");
+    cv.width = Math.round(bmp.width * sc); cv.height = Math.round(bmp.height * sc);
+    cv.getContext("2d").drawImage(bmp, 0, 0, cv.width, cv.height);
+    const url = cv.toDataURL("image/jpeg", q);
+    if (url.length < 700000) return url; // Firestore documents max out at 1 MB
+  }
+  throw new Error("photo too large");
+}
+
+onSyncError(m => window.__teeStatus ? window.__teeStatus(m) : console.warn(m));
+const userP = requireUser({ appName: "Tee Rotation" });
+let lastShirts = {};
+
+window.claude = { async use(name) {
+  const { uid } = await userP;
+  const P = (...p) => ["users", uid, ...p];
+  if (name === "assets") return {
+    async upload(blob) {
+      const data = await shrink(blob);
+      const id = "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      objUrls[id] = { src: data, url: dataUrlToObjectUrl(data) };
+      window.PHOTO_URLS[id] = objUrls[id].url;
+      fire(setDoc(doc(db, ...P("photos", id)), { data }));
+      return { id };
+    }
+  };
+  if (name === "db") {
+    onSnapshot(collection(db, ...P("photos")), snap => {
+      const next = {};
+      snap.forEach(d => {
+        const v = d.data().data;
+        if (typeof v !== "string" || !v.startsWith("data:image/")) return;
+        if (!objUrls[d.id] || objUrls[d.id].src !== v) objUrls[d.id] = { src: v, url: dataUrlToObjectUrl(v) };
+        next[d.id] = objUrls[d.id].url;
+      });
+      window.PHOTO_URLS = next;
+      window.__teeRender && window.__teeRender();
+    }, () => {});
+    return {
+      collection: () => ({
+        doc: id => ({
+          async set(data) {
+            const old = lastShirts[id] && lastShirts[id].photo;
+            fire(setDoc(doc(db, ...P("shirts", id)), data));
+            if (old && old !== data.photo) fire(deleteDoc(doc(db, ...P("photos", old))));
+          },
+          async delete() {
+            const p = lastShirts[id] && lastShirts[id].photo;
+            fire(deleteDoc(doc(db, ...P("shirts", id))));
+            if (p) fire(deleteDoc(doc(db, ...P("photos", p))));
+          }
+        }),
+        onSnapshot(cb, err) {
+          return onSnapshot(collection(db, ...P("shirts")), snap => {
+            lastShirts = {}; snap.forEach(d => { lastShirts[d.id] = d.data(); });
+            cb({ metadata: snap.metadata, docs: snap.docs });
+          }, err);
+        }
+      }),
+      doc: () => ({
+        async set(v) { fire(setDoc(doc(db, ...P("settings", "tees")), v)); },
+        onSnapshot(cb, err) { return onSnapshot(doc(db, ...P("settings", "tees")), d => cb({ exists: d.exists(), data: () => d.data() }), err); }
+      })
+    };
+  }
+  throw new Error("unavailable");
+} };
+</script>
+<script type="module">
+{
+const COLORS={"Black":"#1b1b1b","Charcoal":"#3a3d42","Gray":"#8a8d91","Heather gray":"#b9b9b4","White":"#f7f7f5","Navy":"#1f2a4a","Blue":"#2f6fd6","Light blue":"#9cc6ef","Teal":"#1f8a8a","Green":"#2f8a4c","Olive":"#6b6b3a","Yellow":"#f2c230","Orange":"#ef7b2a","Red":"#c8312b","Maroon":"#6d1f2b","Pink":"#f08fb5","Purple":"#6a3fa0","Brown":"#6b4a32","Tan":"#cdb38b","Tie-dye":"tie","Other":"#9a9a9a"};
+const OCCS=["Work","Casual","Going out","Gym","Lounge"];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad=n=>String(n).padStart(2,"0");
+const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const TODAY=ymd(new Date());
+const daysSince=s=>s?Math.round((new Date(TODAY+"T12:00")-new Date(s+"T12:00"))/864e5):Infinity;
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const blobUrl=id=>(window.PHOTO_URLS||{})[id]||"";
+let loaded=false,shirts=[],skipDays=14,db=null,assets=null,editing=null,pendingPhoto=undefined,uid=0;
+
+function tee(name,big){
+  const c=COLORS[name]||COLORS.Other,k="g"+(++uid);
+  const fill=c==="tie"?`url(#${k})`:c;
+  const grad=c==="tie"?`<defs><linearGradient id="${k}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff4f8b"/><stop offset=".35" stop-color="#ffd23f"/><stop offset=".65" stop-color="#2fbf71"/><stop offset="1" stop-color="#2f6fd6"/></linearGradient></defs>`:"";
+  const hook=big?`<path d="M100 6c-8 0-12 6-10 12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M100 18 L40 44 M100 18 L160 44" stroke="#ffffffcc" stroke-width="3"/>`:"";
+  return `<svg viewBox="0 0 200 ${big?200:190}" role="img" aria-label="${esc(name)} shirt">${grad}${hook}<g transform="translate(0 ${big?18:0})">
+<path d="M70 22 L40 30 L8 62 L32 88 L48 74 L48 172 Q100 180 152 172 L152 74 L168 88 L192 62 L160 30 L130 22 Q100 44 70 22Z" fill="${fill}" stroke="#0000002a" stroke-width="2" stroke-linejoin="round"/>
+<path d="M70 22 Q100 44 130 22 Q100 34 70 22Z" fill="#00000030"/>
+<path d="M48 74 L48 172 Q60 174 72 175 L66 80Z" fill="#00000014"/><path d="M152 74 L152 172 Q140 174 128 175 L134 80Z" fill="#ffffff1a"/></g></svg>`;
+}
+const thumb=(s,big)=>s.photo&&blobUrl(s.photo)?`<img src="${esc(blobUrl(s.photo))}" alt="${esc(s.name)}" loading="lazy">`:tee(s.color,big);
+const lastWorn=s=>(s.worn||[]).slice().sort().pop()||"";
+const wornText=s=>{const l=lastWorn(s),n=(s.worn||[]).length;if(!l)return"Never worn yet";const d=daysSince(l);return `Worn ${n}× · last ${d===0?"today":d===1?"yesterday":d+" days ago"}`};
+
+/* ---------- daily pick ---------- */
+function hash(str){let h=2166136261;for(const ch of str){h^=ch.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
+function rng(seed){return()=>{seed=(seed+0x6D2B79F5)>>>0;let t=seed;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+function pick(){
+  const occ=$("pickOcc").value;
+  const wornToday=shirts.find(s=>(s.worn||[]).includes(TODAY));
+  if(wornToday)return{s:wornToday,today:true};
+  let pool=shirts.filter(s=>!occ||(s.occasions||[]).includes(occ));
+  let fresh=pool.filter(s=>daysSince(lastWorn(s))>skipDays);
+  if(!fresh.length)fresh=pool.slice().sort((a,b)=>lastWorn(a).localeCompare(lastWorn(b))).slice(0,Math.max(1,Math.ceil(pool.length/3)));
+  if(!fresh.length)return null;
+  const r=rng(hash(TODAY+"|"+occ)),order=fresh.slice().sort((a,b)=>a.id.localeCompare(b.id));
+  for(let i=order.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[order[i],order[j]]=[order[j],order[i]]}
+  const n=+(ls.get("reroll:"+TODAY+"|"+occ)||0);
+  return{s:order[n%order.length],today:false,pool:order.length};
+}
+function renderHero(anim){
+  const p=pick(),tag=$("tag"),pic=$("pic");
+  if(!p){pic.innerHTML=tee("Heather gray",true);tag.innerHTML=`<div class="nm">No shirts yet</div><p class="worn">Add a few below and today's pick shows up here.</p>`;$("wear").hidden=$("again").hidden=true;return}
+  const s=p.s;$("wear").hidden=false;$("again").hidden=p.today;
+  $("wear").textContent=p.today?"Undo — not wearing it":"Wear it";
+  pic.innerHTML=thumb(s,true);if(anim){pic.classList.remove("swing");void pic.offsetWidth;pic.classList.add("swing")}
+  const c=COLORS[s.color];
+  tag.innerHTML=`<div class="nm"></div><div class="meta">${s.color?`<span class="chip"><span class="dot" style="background:${c==="tie"?"conic-gradient(#ff4f8b,#ffd23f,#2fbf71,#2f6fd6,#ff4f8b)":c||"#999"}"></span>${esc(s.color)}</span>`:""}${s.theme?`<span class="chip">${esc(s.theme)}</span>`:""}${(s.occasions||[]).map(o=>`<span class="chip">${esc(o)}</span>`).join("")}</div><div class="worn"></div>`;
+  tag.querySelector(".nm").textContent=s.name;
+  tag.querySelector(".worn").textContent=p.today?"✓ You're wearing this today":wornText(s)+(p.pool?` · ${p.pool} fresh option${p.pool>1?"s":""} today`:"");
+  $("wear").onclick=()=>toggleWear(s);
+}
+$("again").onclick=()=>{const k="reroll:"+TODAY+"|"+$("pickOcc").value;ls.set(k,+(ls.get(k)||0)+1);renderHero(true)};
+$("pickOcc").onchange=()=>{ls.set("pickOcc",$("pickOcc").value);renderHero(true)};
+
+/* ---------- roster ---------- */
+function fillFilters(){
+  const keep=id=>$(id).value;
+  const themes=[...new Set(shirts.map(s=>s.theme).filter(Boolean))].sort();
+  const colors=[...new Set(shirts.map(s=>s.color).filter(Boolean))].sort();
+  const set=(id,first,vals)=>{const v=keep(id);$(id).innerHTML=`<option value="">${first}</option>`+vals.map(x=>`<option>${esc(x)}</option>`).join("");$(id).value=vals.includes(v)?v:""};
+  set("fColor","All colors",colors);set("fTheme","All themes",themes);set("fOcc","All occasions",OCCS);
+  const po=$("pickOcc").value||ls.get("pickOcc")||"";
+  $("pickOcc").innerHTML=`<option value="">Pick from: everything</option>`+OCCS.map(o=>`<option value="${o}">Pick from: ${o}</option>`).join("");$("pickOcc").value=po;
+  $("themes").innerHTML=[...new Set(["Band","Gaming","Movie/TV","Event","Brand","Plain","Funny","Sports",...themes])].map(t=>`<option value="${esc(t)}">`).join("");
+}
+function renderGrid(){
+  const q=$("q").value.trim().toLowerCase(),fc=$("fColor").value,ft=$("fTheme").value,fo=$("fOcc").value,so=$("sort").value;
+  let list=shirts.filter(s=>(!q||[s.name,s.theme,s.color,s.notes].join(" ").toLowerCase().includes(q))&&(!fc||s.color===fc)&&(!ft||s.theme===ft)&&(!fo||(s.occasions||[]).includes(fo)));
+  const by={name:(a,b)=>a.name.localeCompare(b.name),color:(a,b)=>(a.color||"").localeCompare(b.color||"")||a.name.localeCompare(b.name),theme:(a,b)=>(a.theme||"~").localeCompare(b.theme||"~")||a.name.localeCompare(b.name),last:(a,b)=>lastWorn(a).localeCompare(lastWorn(b)),most:(a,b)=>(b.worn||[]).length-(a.worn||[]).length,new:(a,b)=>(b.added||"").localeCompare(a.added||"")};
+  list.sort(by[so]);
+  $("count").textContent=`${list.length} of ${shirts.length} shirt${shirts.length===1?"":"s"}`+(shirts.some(s=>s.sample)?" · sample shirts are marked “sample”":"");
+  $("grid").innerHTML=list.length?list.map(s=>`<button class="card${daysSince(lastWorn(s))<=skipDays?" recent":""}" data-id="${esc(s.id)}"><div class="th">${thumb(s)}</div><b>${esc(s.name)}</b><small>${esc([s.theme,s.color].filter(Boolean).join(" · "))}${s.sample?" · sample":""}<br>${esc(wornText(s))}</small></button>`).join(""):`<div class="empty" style="grid-column:1/-1">${shirts.length?"No shirts match those filters.":"Your closet is empty. Use “Add shirt” or “Bulk add” to load your collection."}</div>`;
+  $("clearSamples").hidden=!shirts.some(s=>s.sample);
+}
+["q","fColor","fTheme","fOcc","sort"].forEach(id=>$(id).addEventListener("input",()=>{if(id==="sort")ls.set("sort",$("sort").value);renderGrid()}));
+$("sort").value=ls.get("sort")||"name";
+$("grid").onclick=e=>{const c=e.target.closest(".card");if(c)openEdit(shirts.find(s=>s.id===c.dataset.id))};
+function renderAll(anim){if(!loaded){$("count").textContent="";$("grid").innerHTML=`<div class="empty" style="grid-column:1/-1">Loading your closet…</div>`;return}fillFilters();renderHero(anim);renderGrid()}
+window.__teeRender=()=>renderAll();
+
+/* ---------- writes ---------- */
+const status=t=>{$("status").textContent=t};
+window.__teeStatus=status;
+async function save(id,data){if(!db){status("Saving isn't available in this browser.");throw 0}await db.collection("shirts").doc(id).set(data)}
+async function toggleWear(s){
+  const worn=new Set(s.worn||[]);worn.has(TODAY)?worn.delete(TODAY):worn.add(TODAY);
+  const {id,...rest}=s;try{await save(id,{...rest,worn:[...worn].sort()});status("")}catch(e){e&&status("Couldn't save — try again.")}
+}
+
+/* ---------- edit dialog ---------- */
+$("eColor").innerHTML=Object.keys(COLORS).map(c=>`<option>${c}</option>`).join("");
+$("eOcc").innerHTML=OCCS.map(o=>`<label><input type="checkbox" value="${o}"> ${o}</label>`).join("");
+function showThumb(){const s={color:$("eColor").value,name:$("eName").value,photo:pendingPhoto===undefined?(editing?.photo||""):pendingPhoto};$("eThumb").innerHTML=thumb(s);$("eNoPhoto").hidden=!s.photo}
+$("eColor").onchange=showThumb;
+function openEdit(s){
+  editing=s||null;pendingPhoto=undefined;
+  $("eTitle").textContent=s?"Edit shirt":"Add shirt";
+  $("eName").value=s?.name||"";$("eColor").value=s?.color||"Black";$("eTheme").value=s?.theme||"";$("eNotes").value=s?.notes||"";
+  $("eOcc").querySelectorAll("input").forEach(i=>i.checked=(s?.occasions||["Casual"]).includes(i.value));
+  $("ePhoto").value="";$("ePhoto").disabled=!assets;$("eDel").hidden=!s;$("eDel").textContent="Delete";
+  $("eHist").textContent=s?wornText(s)+((s.worn||[]).length?" · "+(s.worn||[]).slice(-5).reverse().join(", "):""):(assets?"":"Photo uploads aren't available in this browser.");
+  showThumb();$("dEdit").showModal();
+}
+$("add").onclick=()=>openEdit(null);
+$("eCancel").onclick=()=>$("dEdit").close();
+$("eNoPhoto").onclick=()=>{pendingPhoto="";$("ePhoto").value="";showThumb()};
+$("ePhoto").onchange=async()=>{
+  const f=$("ePhoto").files[0];if(!f||!assets)return;
+  $("eSave").disabled=true;$("eHist").textContent="Processing photo…";
+  try{
+    const bmp=await createImageBitmap(f),sc=Math.min(1,900/Math.max(bmp.width,bmp.height));
+    const cv=document.createElement("canvas");cv.width=Math.round(bmp.width*sc);cv.height=Math.round(bmp.height*sc);
+    cv.getContext("2d").drawImage(bmp,0,0,cv.width,cv.height);
+    const blob=await new Promise(r=>cv.toBlob(r,"image/jpeg",.85));
+    const a=await assets.upload(blob);pendingPhoto=a.id;$("eHist").textContent="Photo ready — hit Save.";
+  }catch(e){$("eHist").textContent="Couldn't use that photo."}
+  $("eSave").disabled=false;showThumb();
+};
+$("fEdit").onsubmit=async e=>{
+  e.preventDefault();const name=$("eName").value.trim();if(!name)return;
+  const data={name,color:$("eColor").value,theme:$("eTheme").value.trim(),occasions:[...$("eOcc").querySelectorAll("input:checked")].map(i=>i.value),notes:$("eNotes").value.trim(),photo:pendingPhoto===undefined?(editing?.photo||""):pendingPhoto,worn:editing?.worn||[],added:editing?.added||new Date().toISOString(),sample:false};
+  const id=editing?.id||("s"+Date.now().toString(36)+Math.random().toString(36).slice(2,6));
+  $("eSave").disabled=true;
+  try{await save(id,data);$("dEdit").close();status(editing?"Saved.":"Added "+name+".")}catch(er){er&&status("Couldn't save — try again.")}
+  $("eSave").disabled=false;
+};
+$("eDel").onclick=async()=>{
+  if($("eDel").textContent==="Delete"){$("eDel").textContent="Tap again to delete";return}
+  try{await db.collection("shirts").doc(editing.id).delete();$("dEdit").close();status("Deleted "+editing.name+".")}catch(e){status("Couldn't delete — try again.")}
+};
+
+/* ---------- bulk add ---------- */
+$("bulk").onclick=()=>{$("bNote").textContent="";$("dBulk").showModal()};
+$("bCancel").onclick=()=>$("dBulk").close();
+const matchColor=t=>Object.keys(COLORS).find(c=>c.toLowerCase()===t.toLowerCase())||(t?"Other":"Black");
+$("fBulk").onsubmit=async e=>{
+  e.preventDefault();
+  const lines=$("bText").value.split("\n").map(l=>l.trim()).filter(Boolean);if(!lines.length)return;
+  let n=0;const now=Date.now();
+  for(const [i,l] of lines.entries()){
+    const [name,color="",theme="",occ=""]=l.split("|").map(x=>x.trim());if(!name)continue;
+    const occasions=occ.split(",").map(x=>x.trim()).map(x=>OCCS.find(o=>o.toLowerCase()===x.toLowerCase())).filter(Boolean);
+    $("bNote").textContent=`Adding ${i+1} of ${lines.length}…`;
+    try{await save("s"+(now+i).toString(36)+Math.random().toString(36).slice(2,5),{name:name.slice(0,80),color:matchColor(color),theme:theme.slice(0,40),occasions:occasions.length?occasions:["Casual"],notes:"",photo:"",worn:[],added:new Date(now+i).toISOString(),sample:false});n++}
+    catch(er){$("bNote").textContent=`Stopped after ${n}: couldn't save.`;return}
+  }
+  $("bText").value="";$("dBulk").close();status(`Added ${n} shirt${n===1?"":"s"}.`);
+};
+
+/* ---------- footer: samples, backup, restore, setting ---------- */
+$("clearSamples").onclick=async()=>{for(const s of shirts.filter(s=>s.sample)){try{await db.collection("shirts").doc(s.id).delete()}catch(e){status("Couldn't remove all samples.");return}}status("Samples removed.")};
+$("copyJson").onclick=()=>{
+  const blob=new Blob([JSON.stringify({app:"tee-rotation",exported:new Date().toISOString(),skipDays,shirts:shirts.map(s=>({...s,photo:""}))},null,1)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="tee-rotation-backup-"+TODAY+".json";
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);status("Backup downloaded.");
+};
+$("restore").onchange=async e=>{
+  const f=e.target.files[0];e.target.value="";if(!f||!db||!loaded)return;
+  try{
+    const data=JSON.parse(await f.text());const list=Array.isArray(data)?data:data.shirts;
+    if(!Array.isArray(list))throw 0;
+    const valid=list.filter(s=>s&&typeof s.name==="string");
+    if(!confirm(`Add or update ${valid.length} shirts from this backup? Shirts with the same ID will be replaced.`))return;
+    for(const s of valid){const {id,...rest}=s;const keepPhoto=shirts.find(x=>x.id===id)?.photo||"";
+      await save(String(id||("s"+Math.random().toString(36).slice(2,10))),{name:rest.name.slice(0,80),color:COLORS[rest.color]?rest.color:"Other",theme:String(rest.theme||"").slice(0,40),occasions:(rest.occasions||[]).filter(o=>OCCS.includes(o)),notes:String(rest.notes||"").slice(0,200),photo:keepPhoto,worn:(rest.worn||[]).filter(d=>/^\d{4}-\d{2}-\d{2}$/.test(d)),added:rest.added||new Date().toISOString(),sample:!!rest.sample})}
+    if(Number.isFinite(+data.skipDays))await db.doc("settings/main").set({skipDays:+data.skipDays});
+    status(`Restored ${valid.length} shirts.`);
+  }catch(er){status("That file isn't a Tee Rotation backup.")}
+};
+let skipTimer;
+$("skip").oninput=()=>{clearTimeout(skipTimer);skipTimer=setTimeout(async()=>{const v=Math.max(0,Math.min(365,+$("skip").value||0));if(v===skipDays)return;skipDays=v;renderAll();try{await db?.doc("settings/main").set({skipDays:v})}catch(e){status("Couldn't save that setting.")}},600)};
+
+/* ---------- boot ---------- */
+$("today").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
+renderAll();
+(async()=>{
+  try{assets=await claude.use("assets")}catch(e){}
+  try{db=await claude.use("db")}catch(e){}
+  if(!db){$("tag").innerHTML='<div class="nm">Storage is blocked</div>';status("This browser isn't letting the page save data (private mode?).");return}
+  let first=true;
+  db.collection("shirts").onSnapshot(snap=>{
+    shirts=snap.docs.map(d=>({id:d.id,...d.data()})).filter(s=>typeof s.name==="string");loaded=true;
+    renderAll(first);first=false;
+  },e=>{status("Couldn't load your closet.")});
+  db.doc("settings/main").onSnapshot(d=>{const v=d.exists?+d.data().skipDays:14;if(Number.isFinite(v)&&v!==skipDays){skipDays=v;$("skip").value=v;renderAll()}},()=>{});
+})();
+}
+</script>
+</body>
+</html>
